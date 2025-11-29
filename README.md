@@ -31,6 +31,15 @@ Requisitos: `kubectl` apuntando al cluster correcto (contexto activo) y un Ingre
 ./scripts/delete-all.sh
 ```
 
+## Guía local (Minikube) cumpliendo los mínimos
+- Creación del clúster: `minikube start` y contexto activo con `kubectl config use-context minikube`.
+- Almacenamiento: crea la ruta hostPath en el nodo `minikube ssh "sudo mkdir -p /mnt/data/fintech-db && sudo chmod 777 /mnt/data/fintech-db"`.
+- Ingress/Redes: habilita ingress `minikube addons enable ingress` y añade `/etc/hosts`: `echo "$(minikube ip) fintech.local" | sudo tee -a /etc/hosts`.
+- Seguridad: revisa/edita `k8s/security/secrets.yaml` y `k8s/security/networkpolicy.yaml` antes de desplegar.
+- Puesta en marcha (cargas de trabajo + servicios + balanceadores): `./scripts/apply-all.sh` aplica Deployments/StatefulSet, Services e Ingress/HPA.
+- Verificación: `kubectl get pods -n fintech`, `kubectl get svc -n fintech`, `kubectl get ingress -n fintech`; prueba `curl http://fintech.local/` y `curl http://fintech.local/api`.
+- Documentación del proceso: reemplaza `docs/informe.pdf` con tu informe y agrega diagramas en `docs/diagramas/` si lo deseas.
+
 ## Notas
 - Los manifiestos usan el namespace `fintech` (crear primero o dejar que `apply-all.sh` lo aplique).
 - `informe.pdf` es un placeholder vacío: reemplázalo con tu entrega real.
