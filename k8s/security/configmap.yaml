@@ -5,7 +5,7 @@ metadata:
   namespace: fintech
 data:
   FRONTEND_HOST: http://fintech.local
-  BACKEND_URL: http://backend-service:8080
+  BACKEND_URL: http://backend-service:9091
   DB_HOST: db-service
-  DB_NAME: fintech
+  DB_NAME: devsudb
   DB_PORT: "5432"

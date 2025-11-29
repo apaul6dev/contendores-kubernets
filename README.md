@@ -17,6 +17,11 @@ Las imágenes publicadas en Docker Hub (origen: entorno Docker local con red `de
 - Backend: `apauldev/backdevsu-app:1.0`
 - Frontend: `apauldev/frontdevsu-app:1.0`
 
+## Puertos y credenciales (.env base)
+- Puertos expuestos en Services: frontend 8080, backend 9091, base de datos 5432 (interno).
+- Credenciales DB: `POSTGRES_DB=devsudb`, `POSTGRES_USER=admin`, `POSTGRES_PASSWORD=admin` (ajusta en `k8s/security/secrets.yaml`).
+- Backend lee `BACKEND_URL` desde ConfigMap y apunta a `http://backend-service:9091`.
+
 ## Despliegue rápido
 Requisitos: `kubectl` apuntando al cluster correcto (contexto activo) y un Ingress Controller si usas `k8s/infra/ingress.yaml`.
 
@@ -39,6 +44,13 @@ Requisitos: `kubectl` apuntando al cluster correcto (contexto activo) y un Ingre
 - Puesta en marcha (cargas de trabajo + servicios + balanceadores): `./scripts/apply-all.sh` aplica Deployments/StatefulSet, Services e Ingress/HPA.
 - Verificación: `kubectl get pods -n fintech`, `kubectl get svc -n fintech`, `kubectl get ingress -n fintech`; prueba `curl http://fintech.local/` y `curl http://fintech.local/api`.
 - Documentación del proceso: reemplaza `docs/informe.pdf` con tu informe y agrega diagramas en `docs/diagramas/` si lo deseas.
+
+## Verificación y acceso (ejemplo local)
+- Estado de recursos: `kubectl get all -n fintech` y `kubectl get events -n fintech --sort-by=.lastTimestamp`.
+- Logs: `kubectl logs -n fintech deploy/frontend -f`, `kubectl logs -n fintech deploy/backend -f`, `kubectl logs -n fintech sts/fintech-db -c postgres -f`.
+- Acceso HTTP con Ingress: `http://fintech.local` (frontend 8080) y `http://fintech.local/api` (backend 9091) tras configurar `/etc/hosts`.
+- Sin Ingress (alternativa): `minikube service frontend-service -n fintech --url` y `minikube service backend-service -n fintech --url`.
+- Base de datos (solo para pruebas locales): `kubectl port-forward -n fintech svc/db-service 5432:5432` y conecta a `localhost:5432` (DB `devsudb`, user/pass `admin`).
 
 ## Notas
 - Los manifiestos usan el namespace `fintech` (crear primero o dejar que `apply-all.sh` lo aplique).
