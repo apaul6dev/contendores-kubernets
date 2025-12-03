@@ -8,6 +8,7 @@ Manifiestos para desplegar la app fintech (frontend + backend + Postgres) que en
 - `k8s/db/`: StatefulSet de Postgres, Service y PVC.
 - `k8s/app/`: Deployments y Services de backend y frontend.
 - `scripts/`: `apply-all.sh` y `delete-all.sh`.
+- `docs/cluster-setup.md`: guía para crear un clúster kubeadm (1 control + 1 worker) y validar conectividad.
 
 ## Variables (igual que docker-compose)
 - Puertos: frontend 8080 (target 80), backend 9091 (target 9091), base de datos 5432.
@@ -26,6 +27,18 @@ Manifiestos para desplegar la app fintech (frontend + backend + Postgres) que en
 chmod +x scripts/apply-all.sh scripts/delete-all.sh
 ./scripts/apply-all.sh
 ```
+
+### Acceso en localhost (igual que docker-compose)
+Con el clúster corriendo, ejecuta en otra terminal:
+```bash
+chmod +x scripts/port-forward.sh
+./scripts/port-forward.sh
+```
+Esto expone:
+- Frontend: http://localhost:8080
+- Backend: http://localhost:9091
+- Base de datos: localhost:5432
+(el script queda en foreground; Ctrl+C para detenerlo).
 
 ## Verificación
 - Estado general: `kubectl get pods,svc,ingress,hpa,pdb -n fintech`.
